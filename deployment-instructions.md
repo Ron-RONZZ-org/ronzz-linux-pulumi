@@ -9,7 +9,7 @@ This Pulumi project deploys the following resources:
 - **Compute Instance**: VM.Standard.A1 (ARM-based)
   - 4 OCPUs (Oracle CPUs)
   - 24 GB RAM
-  - Oracle Linux 8 (latest image)
+  - Ubuntu Linux (latest image)
 - **Networking** (created automatically if not provided):
   - Virtual Cloud Network (VCN)
   - Internet Gateway
@@ -33,26 +33,24 @@ Before you begin, ensure you have the following:
 
 Clone the repository and install Python dependencies:
 
+In this documentation, [`Poetry`](https://ronzz.org/py#poetry) is used to manage Python packages. Any other package manager can work.
+
 ```bash
 cd ronzz-linux-pulumi
-pip install -r requirements.txt
-```
-
-Or use a virtual environment (recommended):
-
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-pip install -r requirements.txt
+poetry add $(cat requirements.txt)
+poetry install
 ```
 
 ### 2. Configure OCI Credentials
 
 You need to configure OCI authentication. There are two methods:
 
-#### Method A: Using OCI CLI Configuration (Recommended)
+#### Method A: Using OCI CLI Configuration
 
 1. Install OCI CLI: https://docs.oracle.com/en-us/iaas/Content/API/SDKDocs/cliinstall.htm
+
+> The installer for Linux is a bash script, which may fail on your Linux distribution. If so, use method B, which is manual but valid.
+
 2. Configure OCI CLI:
    ```bash
    oci setup config
@@ -67,6 +65,29 @@ You need to configure OCI authentication. There are two methods:
 
 Set the following environment variables:
 
+For tenancy OCID, go to `profile>tenancy`.
+
+[profile](/home/rongzhou/Documents/ronzz-linux-pulumi/images/oci-console-profile.png)
+
+For user OCID, it is `profile>identity domain>user management`
+
+[user-ocid](/home/rongzhou/Documents/ronzz-linux-pulumi/images/user-ocid.png)
+
+Fingerprint is of your public authentification key. You can create a keypair by :
+
+```bash
+openssl genrsa -out ~/.oci/oci_api_key.pem 2048 #private key location : ~/.oci/oci_api_key.pem
+openssl rsa -pubout -in ~/.oci/oci_api_key.pem -out ~/.oci/oci_api_key_public.pem #public key location : ~/.oci/oci_api_key_public.pem 
+```
+
+Then upload the public key to your Oracle account by `Profile>User settings>Tokens and Keys`.
+
+[API keys](/home/rongzhou/Documents/ronzz-linux-pulumi/images/api-key.png)
+
+Region can be found by clicking on the displayed region then choosing `manage regions`.
+
+[region](/home/rongzhou/Documents/ronzz-linux-pulumi/images/region.png)
+
 ```bash
 export OCI_TENANCY_OCID=<your-tenancy-ocid>
 export OCI_USER_OCID=<your-user-ocid>
@@ -80,6 +101,7 @@ export OCI_REGION=<your-region>
 Initialize a new Pulumi stack (or use an existing one):
 
 ```bash
+curl -fsSL https://get.pulumi.com | sh # Install pulumi
 pulumi login  # Login to Pulumi (you can use local backend: pulumi login --local)
 pulumi stack init dev  # Create a new stack named 'dev'
 ```
@@ -92,23 +114,26 @@ Set the required configuration values for your deployment:
 # Required configurations
 pulumi config set compartment_id <your-compartment-ocid>
 pulumi config set availability_domain <your-availability-domain>
-pulumi config set ssh_public_key "<your-ssh-public-key-content>"
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" # .pub est automatiquement simultanément crée
+pulumi config set ssh_public_key -- "$(cat ~/.ssh/id_rsa.pub)"
+pulumi config set image_id Canonical-Ubuntu-24.04-Minimal-aarch64-2025.10.31-0
 ```
+
+> **Important**: The SSH public key is different from the OCI API key (`~/.oci/oci_api_key_public.pem`). You need an SSH key (format: `ssh-rsa AAAA...`) to connect to the instance, not the PEM-formatted API key. If you don't have an SSH key, create one with: `ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa`
 
 **Finding Your Values:**
 
-- **Compartment OCID**: Go to OCI Console → Identity & Security → Compartments
-- **Availability Domain**: Format is usually `<region>-AD-1`, `<region>-AD-2`, etc.
-  - Example: `US-ASHBURN-AD-1`
+- **Compartment OCID**: [`OCI Console > navigation menu > Identity & Security > Compartments`](https://docs.oracle.com/en-us/iaas/Content/GSG/Tasks/contactingsupport_topic-Locating_Oracle_Cloud_Infrastructure_IDs.htm#Finding_the_OCID_of_a_Compartment) The default compartment ID is identical to your `OCI_TENANCY_OCID`.
+- **Availability Domain**: Format is usually `<region-code>-AD-1`, `<region-code>-AD-2`, etc.
+  - Example: Paris 1 - `CDG-AD-1` 
   - You can list them using: `oci iam availability-domain list`
-- **SSH Public Key**: Content of your `~/.ssh/id_rsa.pub` file
+- **SSH Public Key**: Content of your `~/.ssh/id_rsa.pub` file (SSH format, not PEM)
 
 **Optional configurations** (if you have existing network resources):
 
 ```bash
 pulumi config set vcn_id <existing-vcn-ocid>
 pulumi config set subnet_id <existing-subnet-ocid>
-pulumi config set image_id <specific-image-ocid>
 ```
 
 ### 5. Preview the Deployment
@@ -116,6 +141,7 @@ pulumi config set image_id <specific-image-ocid>
 Before deploying, preview the changes:
 
 ```bash
+eval $(poetry env activate) 
 pulumi preview
 ```
 
@@ -188,11 +214,11 @@ Review the resources to be deleted and confirm by typing "yes".
 
 If you get an error about image not found:
 
-1. Manually find an Oracle Linux 8 image OCID for VM.Standard.A1:
+1. Manually find an Ubuntu Linux 24.04 image OCID for VM.Standard.A1:
    ```bash
    oci compute image list \
      --compartment-id <your-compartment-ocid> \
-     --operating-system "Oracle Linux" \
+     --operating-system "Canonical Ubuntu" \
      --shape "VM.Standard.A1"
    ```
 
@@ -209,7 +235,7 @@ VM.Standard.A1 instances use ARM-based processors and are part of Oracle's Alway
 - Available OCPUs for the A1 shape (4 OCPUs required)
 - Available memory (24 GB required)
 
-Check service limits in OCI Console → Governance & Administration → Limits, Quotas and Usage
+Check service limits in OCI Console > Governance & Administration > Limits, Quotas and Usage
 
 ### SSH Connection Issues
 

@@ -22,3 +22,6 @@ Pulumi.*.yaml
 # OS
 .DS_Store
 Thumbs.db
+
+# Oracle
+.oracle_credentials
