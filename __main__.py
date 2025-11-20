@@ -118,6 +118,10 @@ instance = oci.core.Instance(
     availability_domain=availability_domain,
     compartment_id=compartment_id,
     shape="VM.Standard.A1",
+    shape_config=oci.core.InstanceShapeConfigArgs(
+        ocpus=4,
+        memory_in_gbs=24,
+    ),
     display_name="ronzz-linux-server",
     create_vnic_details=oci.core.InstanceCreateVnicDetailsArgs(
         subnet_id=subnet_id, assign_public_ip=True, display_name="ronzz-primary-vnic"
