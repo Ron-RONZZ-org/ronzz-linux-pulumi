@@ -238,19 +238,19 @@ semver = ">=3.0,<4.0"
 
 [[package]]
 name = "pulumi-oci"
-version = "2.33.0"
+version = "3.12.0"
 description = "A Pulumi package for creating and managing Oracle Cloud Infrastructure resources."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "pulumi_oci-2.33.0-py3-none-any.whl", hash = "sha256:27c0c9bdff01e5fdb463e8d6f12f91b078df05f2074321c2120ff3a0b9360881"},
-    {file = "pulumi_oci-2.33.0.tar.gz", hash = "sha256:8e755e0a7cf7372ae742782a2e5d3c30c6e5a0a46bdfb739bfc75cc5ced543e0"},
+    {file = "pulumi_oci-3.12.0-py3-none-any.whl", hash = "sha256:02afa76fc44c82d5a38fa13b6c816b4ae4fe8f2b6b20882e4db493f810c4b251"},
+    {file = "pulumi_oci-3.12.0.tar.gz", hash = "sha256:fafa63f814be436fdd967d56e11f82eebea9f3e9f8eb98d609f235eaa2dfe77b"},
 ]
 
 [package.dependencies]
 parver = ">=0.2.1"
-pulumi = ">=3.142.0,<4.0.0"
+pulumi = ">=3.165.0,<4.0.0"
 semver = ">=2.8.1"
 
 [[package]]
@@ -363,4 +363,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12"
-content-hash = "1c063efea19753eb267c51f64ebd90cdbcafa67832422e10a1af3dbc6d48abb0"
+content-hash = "2ad63b9a768c117e8031f70f0cfb15867f56e476a5152820abeb7265206835de"

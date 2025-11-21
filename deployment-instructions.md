@@ -153,6 +153,7 @@ Deploy the infrastructure:
 
 ```bash
 pulumi up
+PULUMI_DEBUG=true pulumi up # for debugging
 ```
 
 Review the changes and confirm by typing "yes" when prompted.

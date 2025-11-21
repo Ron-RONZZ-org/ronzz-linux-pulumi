@@ -27,6 +27,23 @@ This repository contains Pulumi infrastructure code to deploy computing resource
    pulumi config set ssh_public_key "<your-ssh-public-key>"
    ```
 
+4. (Optional) Set image selection
+
+   The deployment accepts an `image_id` configuration which can be either:
+
+   - A full OCI image OCID (recommended), for example `ocid1.image...`
+   - A display name of an image (the script will attempt to resolve it to an OCID)
+
+   Examples:
+
+   ```bash
+   # Recommended: provide the image OCID directly
+   pulumi config set image_id ocid1.image.oc1..aaaaaaaaxxxxx
+
+   # Or provide a display_name (the script will try to resolve it)
+   pulumi config set image_id "Canonical-Ubuntu-24.04-Minimal-aarch64-2025.10.31-0"
+   ```
+
 4. Deploy:
    ```bash
    pulumi up
@@ -50,3 +67,11 @@ For detailed deployment instructions, troubleshooting, and configuration options
 - Python 3.7+
 - Oracle Cloud Infrastructure account
 - SSH key pair
+
+Notes:
+- If you provide a display name rather than an OCID, the Pulumi code will:
+   1. Try to find an image with that exact `display_name` in the configured compartment.
+   2. If not found, fall back to searching recent Canonical Ubuntu 24.04 images and match by substring.
+   3. If still not found, the deployment will fail and ask you to provide a valid OCID.
+
+- For predictable results across regions and tenancy boundaries, prefer supplying the image OCID shown in the OCI Console.

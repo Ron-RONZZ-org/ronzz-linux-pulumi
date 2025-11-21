@@ -9,7 +9,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "pulumi (>=3.0.0,<4.0.0)",
-    "pulumi-oci (>=2.0.0,<3.0.0)"
+    "pulumi-oci (>=3.0.0,<4.0.0)"
 ]
 
 
