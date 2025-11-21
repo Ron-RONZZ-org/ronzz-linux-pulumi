@@ -119,8 +119,8 @@ instance = oci.core.Instance(
     compartment_id=compartment_id,
     shape="VM.Standard.A1",
     shape_config=oci.core.InstanceShapeConfigArgs(
-        ocpus=4,
-        memory_in_gbs=24,
+        ocpus=4.0,
+        memory_in_gbs=24.0,
     ),
     display_name="ronzz-linux-server",
     create_vnic_details=oci.core.InstanceCreateVnicDetailsArgs(
