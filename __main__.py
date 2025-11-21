@@ -132,7 +132,6 @@ instance = oci.core.Instance(
     metadata={
         "ssh_authorized_keys": ssh_public_key,
     },
-    instance_type="VM",
     is_pv_encryption_in_transit_enabled=True,
 )
 
