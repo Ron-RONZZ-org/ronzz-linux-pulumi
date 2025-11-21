@@ -15,7 +15,7 @@ This repository contains Pulumi Infrastructure as Code (IaC) for deploying Oracl
 - **Cloud SDK**: pulumi-oci v2.0+
 - **Package Manager**: Poetry (configured via pyproject.toml)
 - **Compute Shape**: VM.Standard.A1 (ARM-based, 4 OCPUs, 24GB RAM)
-- **Operating System**: Oracle Linux 8 / Ubuntu Linux 24.04
+- **Operating System**: Ubuntu Linux 24.04
 
 ## Code Structure
 
