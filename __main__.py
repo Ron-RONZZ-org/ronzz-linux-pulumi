@@ -127,7 +127,9 @@ instance = oci.core.Instance(
         subnet_id=subnet_id, assign_public_ip=True, display_name="ronzz-primary-vnic"
     ),
     source_details=oci.core.InstanceSourceDetailsArgs(
-        source_type="image", source_id=image_id
+        source_type="image",
+        source_id=image_id,
+        boot_volume_size_in_gbs="50",
     ),
     metadata={
         "ssh_authorized_keys": ssh_public_key,
