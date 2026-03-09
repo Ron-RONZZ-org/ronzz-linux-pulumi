@@ -1,0 +1,1 @@
+[] Manual instance creation : https://cloud.oracle.com/compute/instances/create?region=eu-paris-1

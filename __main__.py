@@ -57,7 +57,7 @@ if not vcn_id:
         ],
     )
 
-    # Create Security List
+    # Create Security Lists
     security_list = oci.core.SecurityList(
         "ronzz-security-list",
         compartment_id=compartment_id,
@@ -77,6 +77,48 @@ if not vcn_id:
                 description="Allow SSH",
                 tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
                     min=22, max=22
+                ),
+            ),
+            oci.core.SecurityListIngressSecurityRuleArgs(
+                protocol="1", source="0.0.0.0/0", description="Allow ICMP"  # ICMP
+            ),
+        ],
+    )
+    security_list_net = oci.core.SecurityList(
+        "ronzz-security-net-list",
+        compartment_id=compartment_id,
+        vcn_id=vcn_id,
+        display_name="ronzz-net-security-list",
+        egress_security_rules=[
+            oci.core.SecurityListEgressSecurityRuleArgs(
+                destination="0.0.0.0/0",
+                protocol="all",
+                description="Allow all outbound traffic",
+            )
+        ],
+        ingress_security_rules=[
+            oci.core.SecurityListIngressSecurityRuleArgs(
+                protocol="6",  # TCP
+                source="0.0.0.0/0",
+                description="Allow SSH",
+                tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
+                    min=22, max=22
+                ),
+            ),
+            oci.core.SecurityListIngressSecurityRuleArgs(
+                protocol="6",  # TCP
+                source="0.0.0.0/0",
+                description="Allow HTTP",
+                tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
+                    min=80, max=80
+                ),
+            ),
+            oci.core.SecurityListIngressSecurityRuleArgs(
+                protocol="6",  # TCP
+                source="0.0.0.0/0",
+                description="Allow HTTP",
+                tcp_options=oci.core.SecurityListIngressSecurityRuleTcpOptionsArgs(
+                    min=443, max=443
                 ),
             ),
             oci.core.SecurityListIngressSecurityRuleArgs(
@@ -217,6 +259,7 @@ if subnet_id:
         raise Exception(f"Failed to validate subnet '{subnet_id}': {e}")
 
 # Create Compute Instance using A1 Flex with explicit shape_config (ocpus and memory)
+"""
 instance = oci.core.Instance(
     "ronzz-linux-server",
     availability_domain=availability_domain,
@@ -268,3 +311,4 @@ pulumi.export(
     primary_vnic_output.apply(lambda vnic: vnic.private_ip_address if vnic else "N/A"),
 )
 pulumi.export("instance_state", instance.state)
+"""
